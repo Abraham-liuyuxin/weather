@@ -1,2 +1,2 @@
-# myblog
+# some demo
 by liuyuxin
