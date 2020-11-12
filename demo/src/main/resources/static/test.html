@@ -5,30 +5,52 @@
     <title>Title</title>
 </head>
 <body>
+<div id="tst">
+    <h5>
+        {{recieve}}
+    </h5>
+    <button v-on:click="">
+        btn
+    </button>
+</div>
 
-<h5 id="tst">
-    {{recieve}}
-</h5>
 
-<script src="vue.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 <script src="//unpkg.com/element-ui@2.14.0/lib/index.js"></script>
-<script src="axios.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.js"></script>
+
+
 <script>
-
-    axios.post("/getbyn_y_m",this.send).then((response)=>function () {
-        this.recieve=response.data;
-        console.log(this.send);
-        console.log(response);
-    });
-
-    new Vue({
+    let vm=new Vue({
         el: '#tst',
         data: {
-            recieve:'',
-            send:"Sttring",
-
+            recieve: '',
+            send: "Sttring",
+            st: {
+                name: '在人间',
+                id: "123"
+            },
+            methods: {
+                kick: function () {
+                    alert('success')
+                }
+            }
         }
     })
+
+    axios.post("/test_conn",vm.st)
+        .then(function (response) {
+            vm.recieve=response.data;
+            console.log(vm.send);
+            console.log(response);
+        })
+        .catch(function (response) {
+            vm.recieve=response.response.data;
+            console.log(vm.send);
+            console.log(response.response.headers);
+        });
+
 </script>
 </body>
 

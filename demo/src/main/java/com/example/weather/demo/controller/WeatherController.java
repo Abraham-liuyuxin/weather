@@ -1,5 +1,6 @@
 package com.example.weather.demo.controller;
 
+import com.example.weather.demo.model.Test;
 import com.example.weather.demo.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,20 @@ public class WeatherController {
 
         List<Map<String,Object>> list = weatherService.getbyname(js);
         return list;
+    }
+
+    @RequestMapping("/test_conn")
+    public String response(@RequestBody(required = false) Map<String,Object> test){
+        int id = 11;
+        String name = "行不通";
+        try {
+            name = test.get("name").toString();
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        System.out.println(name);
+        String str = "无了无了";
+        return str;
     }
 
 
