@@ -13,6 +13,16 @@ public class WeatherService {
     @Resource
     private WeatherMapper weatherMapper;
 
+    public List<Map<String,String>>getCityname(){
+        List<Map<String,String>> list = null;
+        try{
+            list = weatherMapper.getCityname();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<Map<String,Object>> getbyname(Map<String,String> js){
         List<Map<String,Object>> list = null;
         try {

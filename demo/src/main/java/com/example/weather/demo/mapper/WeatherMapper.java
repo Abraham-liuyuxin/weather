@@ -17,6 +17,9 @@ public interface WeatherMapper {
             "where a.cityname = (#{js.cityname})")
     public List<Map<String,Object>>getWeatherbyname(@Param("js") Map<String,String> map);
 
+    @Select("select cityname from city")
+    public List<Map<String,String>>getCityname();
+
     @Select("select * " +
             "from city a inner join wea_info1 b " +
             "on a.city_id = b.city_id " +
