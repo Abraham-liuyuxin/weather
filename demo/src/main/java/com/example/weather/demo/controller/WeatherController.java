@@ -43,9 +43,7 @@ public class WeatherController {
 //        System.out.println(cityname);
 //        System.out.println(year);
 //        System.out.println(month);
-
-
-        //Map<String,String> js = new HashMap<>();
+//        Map<String,String> js = new HashMap<>();
 //        js.put("cityname","北京");
 //        js.put("year","2018");
 //        js.put("month","02");
@@ -63,18 +61,38 @@ public class WeatherController {
         return list;
     }
 
-    @RequestMapping("/test_conn")
-    public String response(@RequestBody(required = false) Map<String,Object> test){
-        int id = 11;
-        String name = "行不通";
+    @RequestMapping("/test_conn2")
+    public Map<String,String> response2(@RequestParam(required = false) Map<String,Object> test){
+        String id = "error2";
+        String name = "行不通2";
         try {
+            id = test.get("id").toString();
             name = test.get("name").toString();
         } catch (Exception e){
             System.out.println(e);
         }
         System.out.println(name);
-        String str = "无了无了";
-        return str;
+        Map<String,String> result = new HashMap<>();
+        result.put("id", id);
+        result.put("name", name);
+        return result;
+    }
+
+    @RequestMapping("/test_conn")
+    public Map<String,String> response(@RequestBody(required = false) Map<String,Object> test){
+        String id = "";
+        String name = "行不通";
+        try {
+            id = test.get("id").toString();
+            name = test.get("name").toString();
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        System.out.println(name);
+        Map<String,String> result = new HashMap<>();
+        result.put("id", id);
+        result.put("name", name);
+        return result;
     }
 
 
