@@ -4,6 +4,7 @@ import com.example.weather.demo.mapper.WeatherMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,4 +64,71 @@ public class WeatherService {
         return list;
     }
 
+    public List<Map<String,String>>getCitynameAndid(){
+        List<Map<String,String>> list = null;
+        try{
+            list = weatherMapper.getCitynameAndid();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Map<String,String>>getCityname3(){
+        List<Map<String,String>> list = null;
+        try{
+            list = weatherMapper.getCityname3();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public String getavgbyyear(Map<String,String> js){
+        Map<String, Double> avg = new HashMap<>();
+        try{
+            avg = weatherMapper.getAvgbyyear(js);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        double t = avg.get("avg(T)");
+        String result = String.format("%.2f",t);
+        return result;
+    }
+
+    public String getavgby5years(Map<String,String> js){
+        Map<String, Double> avg = new HashMap<>();
+        try{
+            avg = weatherMapper.getAvgby5years(js);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        double t = avg.get("avg(T)");
+        String result = String.format("%.2f",t);
+        return result;
+    }
+
+    public String getavgby10years(Map<String,String> js){
+        Map<String, Double> avg = new HashMap<>();
+        try{
+            avg = weatherMapper.getAvgby10years(js);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        double t = avg.get("avg(T)");
+        String result = String.format("%.2f",t);
+        return result;
+    }
+
+    public String getavgby15years(Map<String,String> js){
+        Map<String, Double> avg = new HashMap<>();
+        try{
+            avg = weatherMapper.getAvgby15years(js);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        double t = avg.get("avg(T)");
+        String result = String.format("%.2f",t);
+        return result;
+    }
 }

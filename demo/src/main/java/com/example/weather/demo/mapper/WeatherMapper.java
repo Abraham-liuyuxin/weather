@@ -44,6 +44,29 @@ public interface WeatherMapper {
             "and b.day = (#{js.day})")
     public List<Map<String,Object>>getbyn_y_m_d(@Param("js") Map<String,String> map);
 
-    @Select("select ")
-    public double getAvg(@Param("js") Map<String,String> map);
+    @Select("select * from city3")
+    public List<Map<String,String>>getCitynameAndid();
+
+    @Select("select city from city3")
+    public List<Map<String,String>>getCityname3();
+
+    @Select("select avg(T) from wea_info3_1 " +
+            "where city_id = (#{js.cityid}) " +
+            "and date like CONCAT('%',#{js.year})")
+    public Map<String,Double> getAvgbyyear(@Param("js") Map<String,String> map);
+
+    @Select("select avg(T) from wea_info3_1 " +
+            "where city_id = (#{js.cityid}) " +
+            "and ( date like '%2015' or date like '%2016' or date like '%2017' or date like '%2018' or date like '%2019' or date like '%2020' )")
+    public Map<String,Double> getAvgby5years(@Param("js") Map<String,String> map);
+
+    @Select("select avg(T) from wea_info3_1 " +
+            "where city_id = (#{js.cityid}) " +
+            "and ( date like '%2015' or date like '%2016' or date like '%2017' or date like '%2018' or date like '%2019' or date like '%2020' " +
+            "or date like '%2010' or date like '%2011' or date like '%2012' or date like '%2013' or date like '%2014' )")
+    public Map<String,Double> getAvgby10years(@Param("js") Map<String,String> map);
+
+    @Select("select avg(T) from wea_info3_1 " +
+            "where city_id = (#{js.cityid}) ")
+    public Map<String,Double> getAvgby15years(@Param("js") Map<String,String> map);
 }

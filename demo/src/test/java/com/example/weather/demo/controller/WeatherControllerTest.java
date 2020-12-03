@@ -30,13 +30,6 @@ class WeatherControllerTest {
         System.out.println(citylist);
     }
 
-    @Test
-    void getbyname() {
-    }
-
-    @Test
-    void getbyn_y() {
-    }
 
     @Test
     void getbyn_y_m() {
@@ -58,6 +51,23 @@ class WeatherControllerTest {
         js.put("day","03");
         System.out.println(js);
         List<Map<String,Object>> list = weatherService.getbyn_y_m_d(js);
+        System.out.println(list);
+    }
+
+    @Test
+    void getCityname3() {
+        List<Map<String,String>> list = weatherService.getCityname3();
+        System.out.println(list);
+        List<String> citylist = new ArrayList<>();
+        for (Map<String,String> map : list){
+            citylist.add(map.get("city"));
+        }
+        System.out.println(citylist);
+    }
+
+    @Test
+    void getCitynameAndid() {
+        List<Map<String,String>> list = weatherService.getCitynameAndid();
         System.out.println(list);
     }
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Phaser;
 
 @RestController
 public class WeatherController {
@@ -23,9 +24,9 @@ public class WeatherController {
     public List<String> getCityname(){
         List<Map<String,String>> list = weatherService.getCityname();
         List<String> citylist = new ArrayList<>();
-            for (Map<String,String> map : list){
-                citylist.add(map.get("cityname"));
-            }
+        for (Map<String,String> map : list){
+            citylist.add(map.get("cityname"));
+        }
         return citylist;
     }
 
@@ -71,10 +72,90 @@ public class WeatherController {
      */
     @RequestMapping("/getbyn_y_m_d")
     public List<Map<String,Object>> getbyn_y_m_d(@RequestParam Map<String,String> js){
-
         List<Map<String,Object>> list = weatherService.getbyname(js);
         return list;
     }
+
+
+
+
+    /**
+     * @return 返回数据库中的城市名列表--数据库city3(查看平均气温)
+     */
+    @RequestMapping("/getCityname3")
+    public List<String> getCityname3(){
+        List<Map<String,String>> list = weatherService.getCityname3();
+        List<String> citylist = new ArrayList<>();
+        for (Map<String,String> map : list){
+            citylist.add(map.get("city"));
+        }
+        return citylist;
+    }
+
+    /**
+     * @return 返回数据库中的城市名列表和id--数据库city3(查看平均气温)
+     */
+    @RequestMapping("/getCitynameAndid")
+    public List<Map<String,String>> getCitynameAndid(){
+        List<Map<String,String>> list = weatherService.getCitynameAndid();
+        return list;
+    }
+
+
+    /**
+     *
+     * @param js for example:{"city_id":57687", "year":"2015"}
+     * @return 返回该年平均气温 for example:{"tem_avg":"17.12"}
+     */
+    @RequestMapping("/getavgbyyear")
+    public Map<String,String> getavgbyyear(@RequestBody(required = false) Map<String,String> js){
+        String tem = weatherService.getavgbyyear(js);
+        Map<String,String> result = new HashMap<>();
+        result.put("tem_avg",tem);
+        return result;
+    }
+
+    /**
+     *
+     * @param js for example:{"city_id":57687"}
+     * @return 返回近五年平均气温 for example:{"tem_avg":"17.12"}
+     */
+    @RequestMapping("/getavgby5years")
+    public Map<String,String> getavgby5years(@RequestBody(required = false) Map<String,String> js){
+        String tem = weatherService.getavgbyyear(js);
+        Map<String,String> result = new HashMap<>();
+        result.put("tem_avg",tem);
+        return result;
+    }
+
+    /**
+     *
+     * @param js for example:{"city_id":57687"}
+     * @return 返回近十年平均气温 for example:{"tem_avg":"17.12"}
+     */
+    @RequestMapping("/getavgby10years")
+    public Map<String,String> getavgby10years(@RequestBody(required = false) Map<String,String> js){
+        String tem = weatherService.getavgbyyear(js);
+        Map<String,String> result = new HashMap<>();
+        result.put("tem_avg",tem);
+        return result;
+    }
+
+    /**
+     *
+     * @param js for example:{"city_id":57687"}
+     * @return 返回近15年平均气温 for example:{"tem_avg":"17.12"}
+     */
+    @RequestMapping("/getavgby15years")
+    public Map<String,String> getavgby15years(@RequestBody(required = false) Map<String,String> js){
+        String tem = weatherService.getavgbyyear(js);
+        Map<String,String> result = new HashMap<>();
+        result.put("tem_avg",tem);
+        return result;
+    }
+
+
+
 
     @RequestMapping("/test_conn2")
     public Map<String,String> response2(@RequestParam(required = false) Map<String,String> test){
@@ -109,6 +190,5 @@ public class WeatherController {
         result.put("name", name);
         return result;
     }
-
 
 }
