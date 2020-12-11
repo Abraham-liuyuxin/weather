@@ -89,12 +89,12 @@
                     <el-table id="a"
                             :data="OneData"
                             style="width: 75%"
-                            :default-sort = "{prop: 'date', order: 'descending'}"
                     >
+<!--                            :default-sort = "{prop: 'date', order: 'descending'}"-->
+
                         <el-table-column
                                 prop="date"
                                 label="日期"
-                                sortable
                                 width="180">
                         </el-table-column>
                         <el-table-column
@@ -105,7 +105,6 @@
                         <el-table-column
                                 prop="htemp"
                                 label="最高温度"
-                                sortable
                                 width="180">
                         </el-table-column>
                         <el-table-column
@@ -138,41 +137,28 @@
                         </el-form>
                     </el-col>
                 </el-row>
+                <el-row>
+                    <el-col :offset="6" :span="17">
+                        <el-table   id="b"
+                                                   :data="tableData"
+                                                   style="width: 75%;"
+                                                   :default-sort = "{prop: 'temp', order: 'descending'}"
+                    >
+                        <el-table-column
+                                prop="city"
+                                label="城市"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="temp"
+                                label="平均温度"
+                                sortable
+                                width="180">
+                        </el-table-column>
+                    </el-table>
+                    </el-col>
 
-                <el-table   id="b"
-                        :data="tableData"
-                        style="width: 75%"
-                        :default-sort = "{prop: 'date', order: 'descending'}"
-                >
-                    <el-table-column
-                            prop="date"
-                            label="日期"
-                            sortable
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="city"
-                            label="城市"
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="htemp"
-                            label="最高温度"
-                            sortable
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="ltemp"
-                            label="最低温度"
-                            sortable
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="weather"
-                            label="天气"
-                            width="180">
-                    </el-table-column>
-                </el-table>
+                </el-row>
             </el-main>
             <template v-if="mod==3">
                 <el-main>
@@ -463,17 +449,11 @@
                ltemp: '',
                weather: ''},
            tableData: [{
-               date: '2',
                city: "2",
-               htemp: '2',
-               ltemp: '2',
-               weather: '2'
+               temp: '2',
            }, {
-               date: '2',
                city: "2",
-               htemp: '2',
-               ltemp: '2',
-               weather: '2'
+               temp: '2',
            }]
        },
        methods: {
@@ -564,11 +544,6 @@
                }
 
 
-               axios.post(''.then(function (response) {
-                       let data = response.data;
-                       vm.tableData = response.data;
-                       // console.log(response);
-                   }));
            },
 
            //mod==3时按钮的操作
