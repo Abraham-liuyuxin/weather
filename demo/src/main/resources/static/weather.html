@@ -44,8 +44,8 @@
                                     <i class="el-icon-search"></i>
                                     <span slot="title">天气查询</span>
                                 </template>
-                                <el-menu-item index="1-1" v-on:click="mod=1,datainit()">日期查询</el-menu-item>
-                                <el-menu-item index="1-2" v-on:click="mod=2,datainit()">平均气温查询</el-menu-item>
+                                <el-menu-item index="1-1" v-on:click="mod=1">日期查询</el-menu-item>
+                                <el-menu-item index="1-2" v-on:click="mod=2">平均气温查询</el-menu-item>
                             </el-submenu>
                             <el-submenu index="2" >
                                 <template slot="title">
@@ -53,8 +53,9 @@
                                     <span slot="title">数据对比</span>
                                 </template>
                                 <el-menu-item-group>
-                                    <el-menu-item index="2-1" v-on:click="mod=3,datainit()">城际对比</el-menu-item>
-                                    <el-menu-item index="2-2" v-on:click="mod=4,datainit()">同期对比</el-menu-item>
+                                    <el-menu-item index="2-1" v-on:click="mod=3">城际对比</el-menu-item>
+                                    <el-menu-item index="2-2" v-on:click="mod=4">同期对比</el-menu-item>
+                                    <el-menu-item index="2-3" v-on:click="mod=5">平均气温对比</el-menu-item>
                                 </el-menu-item-group>
                             </el-submenu>
 
@@ -68,8 +69,8 @@
                             <el-form :inline="true"  class="demo-form-inline" >
                                 <el-form-item label="选择城市">
                                     <el-select v-model="citydata" placeholder="选择城市">
-                                        <el-option v-for="city in cities"
-                                                   v-bind:label="city" v-bind:value="city">
+                                        <el-option v-for="c in cities2"
+                                                   v-bind:label="c" v-bind:value="c">
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
@@ -86,7 +87,7 @@
                         </el-col>
                     </el-row>
 
-                    <el-table id="a"
+                    <el-table
                             :data="OneData"
                             style="width: 75%"
                     >
@@ -98,23 +99,23 @@
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="city"
+                                prop="cityname"
                                 label="城市"
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="htemp"
+                                prop="maxtemp"
                                 label="最高温度"
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="ltemp"
+                                prop="mintemp"
                                 label="最低温度"
                                 sortable
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="weather"
+                                prop="wea"
                                 label="天气"
                                 width="180">
                         </el-table-column>
@@ -162,23 +163,22 @@
             </el-main>
             <template v-if="mod==3">
                 <el-main>
-
                     <el-row>
                         <el-col :span="18">
 
                             <el-form :inline="true"  class="demo-form-inline" >
                                 <el-form-item label="选择城市1">
                                     <el-select v-model="citydata" placeholder="选择城市">
-                                        <el-option v-for="city in cities"
-                                                   v-bind:label="city" v-bind:value="city">
+                                        <el-option v-for="c in cities"
+                                                   v-bind:label="c.city" v-bind:value="c.city_id">
                                         </el-option>
 
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="选择城市2">
                                     <el-select v-model="citydata2" placeholder="选择城市">
-                                        <el-option v-for="city in cities"
-                                                   v-bind:label="city" v-bind:value="city">
+                                        <el-option v-for="c in cities"
+                                                   v-bind:label="c.city" v-bind:value="c.city_id">
                                         </el-option>
 
                                     </el-select>
@@ -224,8 +224,8 @@
                             <el-form :inline="true"  class="demo-form-inline" >
                                 <el-form-item label="选择城市">
                                     <el-select v-model="citydata" placeholder="选择城市">
-                                        <el-option v-for="city in cities"
-                                                   v-bind:label="city" v-bind:value="city">
+                                        <el-option  v-for="c in cities"
+                                                   v-bind:label="c.city" v-bind:value="c.city_id">
                                         </el-option>
 
                                     </el-select>
@@ -236,7 +236,6 @@
                                         <el-option v-for="month in months"
                                                    v-bind:label="month" v-bind:value="month">
                                         </el-option>
-
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item>
@@ -245,7 +244,6 @@
                             </el-form>
                         </el-col>
                     </el-row>
-
                     <el-row>
                         <el-col :offset="1" :span="18">
                             <el-divider></el-divider>
@@ -254,6 +252,45 @@
                     </el-row>
                 </el-main>
             </template>
+            <el-main v-if="mod==5">
+                    <el-row>
+                        <el-col :span="18">
+                            <el-form :inline="true"  class="demo-form-inline" >
+                                <el-form-item label="选择城市1">
+                                    <el-select v-model="citydata"  placeholder="选择城市">
+                                        <el-option  v-for="c in cities"
+                                                   v-bind:label="c.city" v-bind:value="c.city_id">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="选择城市2">
+                                    <el-select v-model="citydata2" placeholder="选择城市">
+                                        <el-option v-for="c in cities"
+                                                   v-bind:label="c.city" v-bind:value="c.city_id">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+
+                                <el-form-item label="时期选择">
+                                    <el-select v-model="periodata2" placeholder="选择时间">
+                                        <el-option v-for="t in period"
+                                                   v-bind:label="t.show" v-bind:value="t.val">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" @click="require5">查询</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :offset="1" :span="18">
+                            <el-divider></el-divider>
+                            <div id="chartdiv3" style="width: 800px;height: 450px;"></div>
+                         </el-col>
+                    </el-row>
+            </el-main>
         </el-container>
     </el-container>
 </div>
@@ -431,10 +468,11 @@
    let vm= new Vue({
        el: '#bigblock',
        data: {
-           searchresult: [{place: '武汉', year: '2015', htemp: 15, ltemp: -2, weather: '晴'}],
-           cities: ['武汉'],
+           cities2:[],
+           cities: [],
            citydata: '',
            citydata2: '',
+           templist:['',''],
            years: ['不选', 2015, 2016, 2017, 2018, 2019],
            yeardata: '不选',
            months: ['不选', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -443,39 +481,16 @@
            datedata: '',
            period:[{show:'近一年', val:1},{show:'近五年', val:5},{show:'近十年', val:10},{show:'近十五年', val:15}],
            periodata:'',
-           OneData:{date: '',
-               city: "",
-               htemp: '',
-               ltemp: '',
-               weather: ''},
-           tableData: [{
-               city: "2",
-               temp: '2',
-           }, {
-               city: "2",
-               temp: '2',
-           }]
+           periodata2:"",
+           OneData:[{date:'',
+               cityname: "",
+               maxtemp: '',
+               mintemp: '',
+               wea: ''}],
+           tableData: [{city: "2",temp: '2',}, {city: "2", temp: '2',}],
+           chartdata1:[{city:"",temp:""},{city:"",temp:""}],
        },
        methods: {
-
-           //查询某年的每一天的天气
-           // requirebyyear: function () {
-           //     axios.post('/getbyn_y', {cityname: this.city, year: this.yeardata})
-           //         .then(function (response) {
-           //             let data = response.data;
-           //             vm.tableData = data;
-           //         })
-           // },
-           //
-           // //查询某月的每一天的天气
-           // requirebymonth: function () {
-           //     axios.post('/getbyn_y_m', {cityname: this.city, year: this.yeardata, month: this.monthdata})
-           //         .then(function (response) {
-           //             let data = response.data;
-           //             vm.tableData = data
-           //         })
-           // },
-
            //查询某天的天气
            requirebydate: function () {
                let date1 = new Date(this.datedata);
@@ -497,15 +512,18 @@
                } else {
                    if (this.datedata) {
                        let date1 = new Date(this.datedata);
-                       let y = date1.getFullYear(); //获取完整的年份(4位,1970-????)
-                       let m = date1.getMonth() + 1; //获取当前月份(0-11,0代表1月)
-                       let d = date1.getDate(); //获取当前日(1-31)
+                       let y = date1.getFullYear().toString(); //获取完整的年份(4位,1970-????)
+                       let m = (date1.getMonth() + 1).toString(); //获取当前月份(0-11,0代表1月)
+                       let d = date1.getDate().toString(); //获取当前日(1-31)
                        axios.post( "/getbyn_y_m_d",Qs.stringify({cityname: this.citydata, year: y, month: m, day: d}))
                            .then(function (response) {
                            let data = response.data;
-                           vm.tableData = response.data;
+                           vm.OneData = data;
+                           vm.OneData[0].date=y+"/"+m+'/'+d;
                            // console.log(response);
-                       })
+                           // console.log(response.data);
+                           // console.log(response.data[0]);
+                           })
                    } else {
                        alert("请选择要查询的时期")
                    }
@@ -722,6 +740,110 @@
                mychart2.setOption(option2);
            },
 
+           //mod==5
+           require5: function(){
+               switch (vm.periodata2) {
+                   case 5:
+                       axios.all([axios.post('/getavgby5years',{'cityid': vm.citydata}),
+                           axios.post('/getavgby5years',{'cityid': vm.citydata2})])
+                       .then(axios.spread(function (temp1,temp2) {
+                                vm.templist[0]=temp1.data;
+                                vm.templist[1]=temp2.data;
+                                console.log(vm.templist)
+                       }));
+                       break;
+                   case 10:
+                       axios.all([axios.post('/getavgby10years',{'cityid': vm.citydata}),
+                           axios.post('/getavgby10years',{'cityid': vm.citydata2})])
+                           .then(axios.spread(function (temp1,temp2) {
+                               vm.templist[0]=temp1.data;
+                               vm.templist[1]=temp2.data;
+                               console.log(vm.templist)
+                           }));
+                       break;
+                   case 15:
+                       axios.all([axios.post('/getavgby15years',{'cityid': vm.citydata}),
+                           axios.post('/getavgby15years',{'cityid': vm.citydata2})])
+                           .then(axios.spread(function (temp1,temp2) {
+                               vm.templist[0]=temp1.data;
+                               vm.templist[1]=temp2.data;
+                               console.log(vm.templist)
+                           }));
+                       break;
+                   case 1:
+
+                       ;}
+
+
+                    let cityname1='';
+                    let cityname2='';
+                    console.log(vm.templist[0]);
+                for (var i=0;i<vm.cities.length;i++)
+                 {
+                      if(vm.cities[i].city_id==vm.citydata){
+                          cityname1=vm.cities[i].city;
+                      }else if(vm.cities[i].city_id==vm.citydata2){
+                          cityname2=vm.cities[i].city;
+                      }
+                 }
+                       let option3 = {
+                           title: {
+                               text: cityname1 + '与' + cityname2 + "对比",
+                               subtext: "近"+vm.periodata2+"年",
+                           },
+                           tooltip: {
+                               trigger: 'axis'
+                           },
+                           legend: {
+                               data: ['平均气温']
+                           },
+                           toolbox: {
+                               show: true,
+                               feature: {
+                                   dataZoom: {
+                                       yAxisIndex: 'none'
+                                   },
+                                   dataView: {readOnly: false},
+                                   magicType: {type: ['line', 'bar']},
+                                   restore: {},
+                               }
+                           },
+                           xAxis: {
+                               type: 'category',
+                               boundaryGap: false,
+                               data: [cityname1,cityname2]
+                           },
+                           yAxis: {
+                               type: 'value',
+                               axisLabel: {
+                                   formatter: '{value} °C'
+                               }
+                           },
+                           series: [
+                               {
+                                   name: '平均气温',
+                                   type: 'line',
+                                   data: [vm.templist[0].tem_avg,vm.templist[1].tem_avg],
+                                   markPoint: {
+                                       data: [
+                                           {type: 'max', name: '最大值'},
+                                           {type: 'min', name: '最小值'}
+                                       ]
+                                   },
+                                   markLine: {
+                                       data: [
+                                           {type: 'average', name: '平均值'}
+                                       ]
+                                   }
+                               },
+                           ]
+                       };
+                       let mychart3 = echarts.init(document.querySelector('#chartdiv3'));
+                       mychart3.setOption(option3);
+
+           },
+
+
            datainit: function () {
                // alert('函数测试')
                this.citydata = '';
@@ -733,13 +855,19 @@
            }
        } ,
            created: function () {
-               axios.post('/getCityname')
+               axios.post('/getCitynameAndid')
                    .then(function (response) {
                        let data = response.data;
                        vm.cities = data;
 
                    })
                    .catch(response => {
+                   })
+               axios.post('/getCityname')
+                   .then(function (response) {
+                       let data = response.data;
+                       vm.cities2 = data;
+
                    })
 
            }
