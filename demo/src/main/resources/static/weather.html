@@ -263,8 +263,8 @@
 <script src="//unpkg.com/element-ui@2.14.0/lib/index.js"></script>
 <script src="echarts.min.js"></script>
 <script src="axios.min.js"></script>
+<script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
 <script>
-
     //let mychart2 = echarts.init(document.querySelector('#chartdiv2'))
     let option2 =       {
         title: {
@@ -459,22 +459,22 @@
        methods: {
 
            //查询某年的每一天的天气
-           requirebyyear: function () {
-               axios.post('/getbyn_y', {cityname: this.city, year: this.yeardata})
-                   .then(function (response) {
-                       let data = response.data;
-                       vm.tableData = data;
-                   })
-           },
-
-           //查询某月的每一天的天气
-           requirebymonth: function () {
-               axios.post('/getbyn_y_m', {cityname: this.city, year: this.yeardata, month: this.monthdata})
-                   .then(function (response) {
-                       let data = response.data;
-                       vm.tableData = data
-                   })
-           },
+           // requirebyyear: function () {
+           //     axios.post('/getbyn_y', {cityname: this.city, year: this.yeardata})
+           //         .then(function (response) {
+           //             let data = response.data;
+           //             vm.tableData = data;
+           //         })
+           // },
+           //
+           // //查询某月的每一天的天气
+           // requirebymonth: function () {
+           //     axios.post('/getbyn_y_m', {cityname: this.city, year: this.yeardata, month: this.monthdata})
+           //         .then(function (response) {
+           //             let data = response.data;
+           //             vm.tableData = data
+           //         })
+           // },
 
            //查询某天的天气
            requirebydate: function () {
@@ -489,7 +489,6 @@
                        console.log(response);
                    })
            },
-
            require1: function () {
                //this.tableData[0].date='2018/12/03';
                //alert(this.tableData[0].date);
@@ -497,19 +496,16 @@
                    alert('请选择城市')
                } else {
                    if (this.datedata) {
-                       this.monthdata = '不选';
-                       this.yeardata = '不选';
-                       this.requirebydate();
-                   } else if (this.monthdata != '不选' && this.yeardata != '不选') {
-                       alert('选择了年和月')
-                       this.requirebymonth();
-                   } else if (this.yeardata != '不选') {
-                       alert('选择了年')
-                       this.requirebyyear();
-                   } else if (this.monthdata != '不选') {
-                       alert('选择了月')
-                       this.yeardata = 2015;
-                       this.requirebymonth();
+                       let date1 = new Date(this.datedata);
+                       let y = date1.getFullYear(); //获取完整的年份(4位,1970-????)
+                       let m = date1.getMonth() + 1; //获取当前月份(0-11,0代表1月)
+                       let d = date1.getDate(); //获取当前日(1-31)
+                       axios.post( "/getbyn_y_m_d",Qs.stringify({cityname: this.citydata, year: y, month: m, day: d}))
+                           .then(function (response) {
+                           let data = response.data;
+                           vm.tableData = response.data;
+                           // console.log(response);
+                       })
                    } else {
                        alert("请选择要查询的时期")
                    }
@@ -519,25 +515,25 @@
            require2: function(){
                switch (vm.periodata) {
                     case 5:
-                        axios.post('/getavgby5years'.then(function (response) {
+                        axios.post('/getavgby5years').then(function (response) {
                             let data = response.data;
                             vm.tableData = response.data;
                             // console.log(response);
-                        }));
+                        });
                         break;
                     case 10:
-                        axios.post('/getavgby10years'.then(function (response) {
+                        axios.post('/getavgby10years').then(function (response) {
                             let data = response.data;
                             vm.tableData = response.data;
                             // console.log(response);
-                        }));
+                        });
                         break;
                     case 15:
-                        axios.post('/getavgby15years'.then(function (response) {
+                        axios.post('/getavgby15years').then(function (response) {
                             let data = response.data;
                             vm.tableData = response.data;
                             // console.log(response);
-                        }));
+                        });
                         break;
                     case 1:
                         ;
@@ -640,7 +636,6 @@
 
            //mod==4时按钮的操作
            require4: function () {
-               //mychart1.clear();
                let mychart2 = echarts.init(document.querySelector('#chartdiv2'))
                // mychart1.clear();
                let option2 = {
@@ -738,7 +733,7 @@
            }
        } ,
            created: function () {
-               axios.post('./data.json')
+               axios.post('/getCityname')
                    .then(function (response) {
                        let data = response.data;
                        vm.cities = data;
