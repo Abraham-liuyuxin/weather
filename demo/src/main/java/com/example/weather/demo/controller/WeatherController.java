@@ -44,7 +44,7 @@ public class WeatherController {
      */
     @RequestMapping("/getbyn_y")
     public List<Map<String,Object>> getbyn_y(@RequestParam Map<String,String> js){
-        List<Map<String,Object>> list = weatherService.getbyname(js);
+        List<Map<String,Object>> list = weatherService.getbyn_y(js);
         return list;
     }
 
@@ -60,7 +60,7 @@ public class WeatherController {
 //        js.put("cityname","北京");
 //        js.put("year","2018");
 //        js.put("month","02");
-        List<Map<String,Object>> list = weatherService.getbyname(js);
+        List<Map<String,Object>> list = weatherService.getbyn_y_m(js);
         System.out.println(js);
         return list;
     }
@@ -72,7 +72,7 @@ public class WeatherController {
      */
     @RequestMapping("/getbyn_y_m_d")
     public List<Map<String,Object>> getbyn_y_m_d(@RequestParam Map<String,String> js){
-        List<Map<String,Object>> list = weatherService.getbyname(js);
+        List<Map<String,Object>> list = weatherService.getbyn_y_m_d(js);
         return list;
     }
 
@@ -117,12 +117,12 @@ public class WeatherController {
 
     /**
      *
-     * @param js for example:{"city_id":57687"}
+     * @param js for example:{"cityid":57687"}
      * @return 返回近五年平均气温 for example:{"tem_avg":"17.12"}
      */
     @RequestMapping("/getavgby5years")
     public Map<String,String> getavgby5years(@RequestBody(required = false) Map<String,String> js){
-        String tem = weatherService.getavgbyyear(js);
+        String tem = weatherService.getavgby5years(js);
         Map<String,String> result = new HashMap<>();
         result.put("tem_avg",tem);
         return result;
@@ -130,12 +130,12 @@ public class WeatherController {
 
     /**
      *
-     * @param js for example:{"city_id":57687"}
+     * @param js for example:{"cityid":57687"}
      * @return 返回近十年平均气温 for example:{"tem_avg":"17.12"}
      */
     @RequestMapping("/getavgby10years")
     public Map<String,String> getavgby10years(@RequestBody(required = false) Map<String,String> js){
-        String tem = weatherService.getavgbyyear(js);
+        String tem = weatherService.getavgby10years(js);
         Map<String,String> result = new HashMap<>();
         result.put("tem_avg",tem);
         return result;
@@ -143,17 +143,16 @@ public class WeatherController {
 
     /**
      *
-     * @param js for example:{"city_id":57687"}
+     * @param js for example:{"cityid":57687"}
      * @return 返回近15年平均气温 for example:{"tem_avg":"17.12"}
      */
     @RequestMapping("/getavgby15years")
     public Map<String,String> getavgby15years(@RequestBody(required = false) Map<String,String> js){
-        String tem = weatherService.getavgbyyear(js);
+        String tem = weatherService.getavgby15years(js);
         Map<String,String> result = new HashMap<>();
         result.put("tem_avg",tem);
         return result;
     }
-
 
 
 
