@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>天气数据查询</title>
     <link rel="stylesheet" href="//unpkg.com/element-ui@2.14.0/lib/theme-chalk/index.css">
-
     <style>
         .el-header, .el-footer {
             color: #333;
@@ -14,60 +13,56 @@
         .el-aside {
             color: #333;
             text-align: center;
-
         }
-
         .el-main {
             color: #333;
             text-align: center;
             line-height: 40px;
-
         }
-
-
     </style>
 </head>
 <body>
 
 <div id="bigblock" >
-
     <el-container>
         <el-header height:160px>
             <el-row>
                 <el-col :span="4"><i class="el-icon-pie-chart" size="medium" ></i></el-col>
-                <el-col :span="14" >WeatherDataView</el-col>
+                <el-col :span="15" >WeatherDataView</el-col>
             </el-row>
         </el-header>
         <el-container>
-            <el-aside width="250px" >
+            <el-aside  width="250px">
                 <el-row class="tac">
-
                     <el-col :span="24">
                         <h5> 操作决定 </h5>
                         <el-menu
                                 default-active="1"
                                 class="el-menu-vertical-demo">
-                            <el-menu-item index="1" value="1" v-on:click="mod=1" >
-                                <i class="el-icon-search"></i>
-                                <span slot="title">天气查询{{mod}}</span>
-                            </el-menu-item>
+                            <el-submenu index="1"  value="1">
+                                <template slot="title">
+                                    <i class="el-icon-search"></i>
+                                    <span slot="title">天气查询</span>
+                                </template>
+                                <el-menu-item index="1-1" v-on:click="mod=1,datainit()">日期查询</el-menu-item>
+                                <el-menu-item index="1-2" v-on:click="mod=2,datainit()">平均气温查询</el-menu-item>
+                            </el-submenu>
                             <el-submenu index="2" >
                                 <template slot="title">
                                     <i class="el-icon-data-line"></i>
                                     <span slot="title">数据对比</span>
                                 </template>
                                 <el-menu-item-group>
-                                    <el-menu-item index="2-1" v-on:click="mod=2">城际对比</el-menu-item>
-                                    <el-menu-item index="2-2" v-on:click="mod=3">纵向对比</el-menu-item>
+                                    <el-menu-item index="2-1" v-on:click="mod=3,datainit()">城际对比</el-menu-item>
+                                    <el-menu-item index="2-2" v-on:click="mod=4,datainit()">同期对比</el-menu-item>
                                 </el-menu-item-group>
                             </el-submenu>
+
                         </el-menu>
                     </el-col>
                 </el-row>
             </el-aside>
-            <template v-if="mod==1">
-                <el-main>
-                    {{date}}
+            <el-main v-if="mod==1">
                     <el-row>
                         <el-col :span="18">
                             <el-form :inline="true"  class="demo-form-inline" >
@@ -76,42 +71,23 @@
                                         <el-option v-for="city in cities"
                                                    v-bind:label="city" v-bind:value="city">
                                         </el-option>
-
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item label="选择年份">
-                                    <el-select v-model="yeardata" placeholder="选择年份">
-                                        <el-option v-for="year in years"
-                                                   v-bind:label="year" v-bind:value="year">
-                                        </el-option>
-
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item label="选择月份">
-                                    <el-select v-model="monthdata" placeholder="选择月份">
-                                        <el-option v-for="month in months"
-                                                   v-bind:label="month" v-bind:value="month">
-                                        </el-option>
-
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="选择日期" >
-
                                     <el-date-picker
-                                            v-model="date" type="date"
+                                            v-model="datedata" type="date"
                                             placeholder="选择日期">
                                     </el-date-picker>
                                 </el-form-item>
-
                                 <el-form-item>
-                                    <el-button type="primary" @click="require">查询</el-button>
+                                    <el-button type="primary" @click="require1">查询</el-button>
                                 </el-form-item>
                             </el-form>
                         </el-col>
                     </el-row>
 
-                    <el-table
-                            :data="tableData"
+                    <el-table id="a"
+                            :data="OneData"
                             style="width: 75%"
                             :default-sort = "{prop: 'date', order: 'descending'}"
                     >
@@ -122,31 +98,83 @@
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="cityname"
+                                prop="city"
                                 label="城市"
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="maxtemp"
+                                prop="htemp"
                                 label="最高温度"
                                 sortable
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="mintemp"
+                                prop="ltemp"
                                 label="最低温度"
                                 sortable
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="wea"
+                                prop="weather"
                                 label="天气"
                                 width="180">
                         </el-table-column>
                     </el-table>
                 </el-main>
-            </template>
-            <template v-if="mod==2">
+            <el-main v-if="mod==2">
+                <el-row>
+                    <el-col :span="18">
+                        <el-form :inline="true"  class="demo-form-inline" >
+                            <el-form-item label="时间周期">
+                                <el-select v-model="periodata" placeholder="选择时间">
+                                    <el-option v-for="t in period"
+                                               v-bind:label="t.show" v-bind:value="t.val">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="require2">查询</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+
+                <el-table   id="b"
+                        :data="tableData"
+                        style="width: 75%"
+                        :default-sort = "{prop: 'date', order: 'descending'}"
+                >
+                    <el-table-column
+                            prop="date"
+                            label="日期"
+                            sortable
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="city"
+                            label="城市"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="htemp"
+                            label="最高温度"
+                            sortable
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="ltemp"
+                            label="最低温度"
+                            sortable
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="weather"
+                            label="天气"
+                            width="180">
+                    </el-table-column>
+                </el-table>
+            </el-main>
+            <template v-if="mod==3">
                 <el-main>
 
                     <el-row>
@@ -187,49 +215,21 @@
                                 </el-form-item>
 
                                 <el-form-item>
-                                    <el-button type="primary" @click="require">查询</el-button>
+                                    <el-button type="primary" @click="require3">查询</el-button>
                                 </el-form-item>
                             </el-form>
                         </el-col>
                     </el-row>
+                    <el-row>
+                        <el-col :offset="1" :span="18">
+                            <el-divider></el-divider>
+                            <div id="chartdiv" style="width: 800px;height: 400px;"></div>
+                        </el-col>
+                    </el-row>
 
-                    <el-table
-                            :data="tableData"
-                            style="width: 75%"
-                            :default-sort = "{prop: 'date', order: 'descending'}"
-                    >
-                        <el-table-column
-                                prop="date"
-                                label="日期"
-                                sortable
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="cityname"
-                                label="城市"
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="maxtemp"
-                                label="最高温度"
-                                sortable
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="mintemp"
-                                label="最低温度"
-                                sortable
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="wea"
-                                label="天气"
-                                width="180">
-                        </el-table-column>
-                    </el-table>
                 </el-main>
             </template>
-            <template v-if="mod==3">
+            <template v-if="mod==4">
                 <el-main>
 
                     <el-row>
@@ -254,196 +254,526 @@
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-button type="primary" @click="require">查询</el-button>
+                                    <el-button type="primary" @click="require4">查询</el-button>
                                 </el-form-item>
                             </el-form>
                         </el-col>
                     </el-row>
 
-                    <el-table
-                            :data="tableData"
-                            style="width: 75%"
-                            :default-sort = "{prop: 'date', order: 'descending'}"
-                    >
-                        <el-table-column
-                                prop="date"
-                                label="日期"
-                                sortable
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="city"
-                                label="城市"
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="maxtemp"
-                                label="最高温度"
-                                sortable
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="mintemp"
-                                label="最低温度"
-                                sortable
-                                width="180">
-                        </el-table-column>
-                        <el-table-column
-                                prop="wea"
-                                label="天气"
-                                width="180">
-                        </el-table-column>
-                    </el-table>
+                    <el-row>
+                        <el-col :offset="1" :span="18">
+                            <el-divider></el-divider>
+                            <div id="chartdiv2" style="width: 800px;height: 450px;"></div>
+                        </el-col>
+                    </el-row>
                 </el-main>
             </template>
-
-
         </el-container>
     </el-container>
 </div>
 
 
-
-
 <script src="vue.js"></script>
 <script src="//unpkg.com/element-ui@2.14.0/lib/index.js"></script>
-<script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
+<script src="echarts.min.js"></script>
 <script src="axios.min.js"></script>
 <script>
 
-
-    let datatest = {cityname: "北京",year: "2018",month: "12"}
-    let paramtest = new URLSearchParams()
-    paramtest.append('cityname', '北京')
-    paramtest.append('year', '2018')
-    paramtest.append('month', '12')
-
-    // axios({
-    //     headers: {
-    //         'deviceCode': 'A95ZEF1-47B5-AC90BF3'
-    //     },
-    //     methods: 'post',
-    //     url: '/getbyn_y_m',
-    //     data: Qs.stringify(datatest)
-    //     })
-    //     .then(function (response) {
-    //         let data = response.data;
-    //         vm.tableData = data;
-    //         console.log(response);
-    //     })
-    let vm= new Vue({
-        el: '#bigblock',
-        data: {
-            searchbymonth:{cityname: "北京",year: "2018",month: "12"},
-            searchresult: [{place: '武汉', year: '2015', htemp: 15, ltemp: -2, weather: '晴'}],
-            cities: ['武汉'],
-            citydata: '',
-            citydata2: '',
-            years: ['不选', 2015, 2016, 2017, 2018, 2019],
-            yeardata: '',
-            months: ['不选', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-            monthdata: '',
-            mod: 1,
-            date: '',
-            datatest:{cityname: "北京",year: "2018",month: "12"},
-            tableData: [{
-                date: '2',
-                cityname: "2",
-                maxtemp: '2',
-                mintemp: '2',
-                wea: '2'
-
-            }, {
-                date: '2',
-                city: "2",
-                htemp: '2',
-                ltemp: '2',
-                weather: '2'
-            }]
+    //let mychart2 = echarts.init(document.querySelector('#chartdiv2'))
+    let option2 =       {
+        title: {
+            text: this.citydata,
+            subtext: this.monthdata + '月',
         },
-        methods: {
-
-
-            //查询某年的每一天的天气
-            requirebyyear: function () {
-                axios.post('/getbyn_y', {cityname: this.city,year: this.yeardata})
-                    .then(function (response) {
-                        let data = response.data;
-                        vm.tableData = data;
-                    })
-
-            },
-
-            //查询某月的每一天的天气
-            requirebymonth: function () {
-                console.log(this.searchbymonth),
-                axios.post('/getbyn_y_m', '')
-                    .then(function (response) {
-                        let data = response.data;
-                        vm.tableData = data;
-                        console.log(response);
-                    })
-
-            },
-
-            //查询某天的天气
-            requirebydate: function () {
-                let y=this.date.getFullYear(); //获取完整的年份(4位,1970-????)
-                let m=this.date.getMonth()+1; //获取当前月份(0-11,0代表1月)
-                let d=this.date.getDate(); //获取当前日(1-31)
-                this.date=this.date.format("yyyyMMdd");
-                axios.post('/getbyn_y_m_d', this.datatest)
-                    .then(function (response) {
-                        let data = response.data;
-                        vm.tableData = response.data
-                    })
-
-            },
-
-
-            require: function () {
-
-                if (this.date) {
-                    this.monthdata = '不选';
-                    this.yeardata = '不选';
-                    this.requirebydate();
-
-                } else if (this.monthdata && this.yeardata) {
-                    this.requirebymonth();
-
-
-                } else if (this.yeardata) {
-                    this.requirebyyear();
-                } else if(this.month){
-                    this.yeardata=2015;
-                    this.requirebymonth();
-                }else {
-                    alert("请选择要查询的数据")
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['最高气温', '最低气温']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                dataView: {readOnly: false},
+                magicType: {type: ['line', 'bar']},
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value} °C'
+            }
+        },
+        series: [
+            {
+                name: '最高气温',
+                type: 'line',
+                data: [11, 11, 15, 13, 12, 13, 10],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
                 }
-                // if(this.monthdata||this.yeardata){
-                //     this.data="";
-                // }
-
-
             },
-
-
-
+            {
+                name: '最低气温',
+                type: 'line',
+                data: [1, -2, 2, 5, 3, 2, 0],
+                markPoint: {
+                    data: [
+                        {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'},
+                        [{
+                            symbol: 'none',
+                            x: '90%',
+                            yAxis: 'max'
+                        }, {
+                            symbol: 'circle',
+                            label: {
+                                position: 'start',
+                                formatter: '最大值'
+                            },
+                            type: 'max',
+                            name: '最高点'
+                        }]
+                    ]
+                }
+            }
+        ]
+    };
+    let option = {
+        title: {
+            text: this.citydata + '与' + this.citydata2 + "对比",
+            subtext: this.yeardata + "年" + this.monthdata + '月',
         },
-        created: function () {
-            axios.post('/getCityname')
-                .then(function (response) {
-                    let data = response.data;
-                    vm.cities = data;
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['最高气温', '最低气温']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                dataView: {readOnly: false},
+                magicType: {type: ['line', 'bar']},
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value} °C'
+            }
+        },
+        series: [
+            {
+                name: '最高气温',
+                type: 'line',
+                data: [11, 11, 15, 13, 12, 13, 10],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            },
+            {
+                name: '最低气温',
+                type: 'line',
+                data: [1, -2, 2, 5, 3, 2, 0],
+                markPoint: {
+                    data: [
+                        {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'},
+                        [{
+                            symbol: 'none',
+                            x: '90%',
+                            yAxis: 'max'
+                        }, {
+                            symbol: 'circle',
+                            label: {
+                                position: 'start',
+                                formatter: '最大值'
+                            },
+                            type: 'max',
+                            name: '最高点'
+                        }]
+                    ]
+                }
+            }
+        ]
+    };
+   let vm= new Vue({
+       el: '#bigblock',
+       data: {
+           searchresult: [{place: '武汉', year: '2015', htemp: 15, ltemp: -2, weather: '晴'}],
+           cities: ['武汉'],
+           citydata: '',
+           citydata2: '',
+           years: ['不选', 2015, 2016, 2017, 2018, 2019],
+           yeardata: '不选',
+           months: ['不选', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+           monthdata: '不选',
+           mod: 0,
+           datedata: '',
+           period:[{show:'近一年', val:1},{show:'近五年', val:5},{show:'近十年', val:10},{show:'近十五年', val:15}],
+           periodata:'',
+           OneData:{date: '',
+               city: "",
+               htemp: '',
+               ltemp: '',
+               weather: ''},
+           tableData: [{
+               date: '2',
+               city: "2",
+               htemp: '2',
+               ltemp: '2',
+               weather: '2'
+           }, {
+               date: '2',
+               city: "2",
+               htemp: '2',
+               ltemp: '2',
+               weather: '2'
+           }]
+       },
+       methods: {
 
-                })
-                .catch(response => {
-                })
+           //查询某年的每一天的天气
+           requirebyyear: function () {
+               axios.post('/getbyn_y', {cityname: this.city, year: this.yeardata})
+                   .then(function (response) {
+                       let data = response.data;
+                       vm.tableData = data;
+                   })
+           },
 
-        }
-    })
+           //查询某月的每一天的天气
+           requirebymonth: function () {
+               axios.post('/getbyn_y_m', {cityname: this.city, year: this.yeardata, month: this.monthdata})
+                   .then(function (response) {
+                       let data = response.data;
+                       vm.tableData = data
+                   })
+           },
+
+           //查询某天的天气
+           requirebydate: function () {
+               let date1 = new Date(this.datedata);
+               let y = date1.getFullYear(); //获取完整的年份(4位,1970-????)
+               let m = date1.getMonth() + 1; //获取当前月份(0-11,0代表1月)
+               let d = date1.getDate(); //获取当前日(1-31)
+               axios.post('./data.json', {cityname: this.citydata, year: y, month: m, day: d})
+                   .then(function (response) {
+                       let data = response.data;
+                       vm.tableData = response.data;
+                       console.log(response);
+                   })
+           },
+
+           require1: function () {
+               //this.tableData[0].date='2018/12/03';
+               //alert(this.tableData[0].date);
+               if (!this.citydata) {
+                   alert('请选择城市')
+               } else {
+                   if (this.datedata) {
+                       this.monthdata = '不选';
+                       this.yeardata = '不选';
+                       this.requirebydate();
+                   } else if (this.monthdata != '不选' && this.yeardata != '不选') {
+                       alert('选择了年和月')
+                       this.requirebymonth();
+                   } else if (this.yeardata != '不选') {
+                       alert('选择了年')
+                       this.requirebyyear();
+                   } else if (this.monthdata != '不选') {
+                       alert('选择了月')
+                       this.yeardata = 2015;
+                       this.requirebymonth();
+                   } else {
+                       alert("请选择要查询的时期")
+                   }
+               }
+           },
+           //mod==2
+           require2: function(){
+               switch (vm.periodata) {
+                    case 5:
+                        axios.post('/getavgby5years'.then(function (response) {
+                            let data = response.data;
+                            vm.tableData = response.data;
+                            // console.log(response);
+                        }));
+                        break;
+                    case 10:
+                        axios.post('/getavgby10years'.then(function (response) {
+                            let data = response.data;
+                            vm.tableData = response.data;
+                            // console.log(response);
+                        }));
+                        break;
+                    case 15:
+                        axios.post('/getavgby15years'.then(function (response) {
+                            let data = response.data;
+                            vm.tableData = response.data;
+                            // console.log(response);
+                        }));
+                        break;
+                    case 1:
+                        ;
+               }
 
 
+               axios.post(''.then(function (response) {
+                       let data = response.data;
+                       vm.tableData = response.data;
+                       // console.log(response);
+                   }));
+           },
+
+           //mod==3时按钮的操作
+           require3: function () {
+               if (this.citydata == this.citydata2) {
+                   alert('请选择不同的城市')
+               }
+               //mychart2.clear();
+               let mychart1 = echarts.init(document.querySelector('#chartdiv'))
+               //mychart2.clear();
+               // let option = {
+               //     title: {
+               //         text: this.citydata + '与' + this.citydata2 + "对比",
+               //         subtext: this.yeardata + "年" + this.monthdata + '月',
+               //     },
+               //     tooltip: {
+               //         trigger: 'axis'
+               //     },
+               //     legend: {
+               //         data: ['最高气温', '最低气温']
+               //     },
+               //     toolbox: {
+               //         show: true,
+               //         feature: {
+               //             dataZoom: {
+               //                 yAxisIndex: 'none'
+               //             },
+               //             dataView: {readOnly: false},
+               //             magicType: {type: ['line', 'bar']},
+               //             restore: {},
+               //             saveAsImage: {}
+               //         }
+               //     },
+               //     xAxis: {
+               //         type: 'category',
+               //         boundaryGap: false,
+               //         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+               //     },
+               //     yAxis: {
+               //         type: 'value',
+               //         axisLabel: {
+               //             formatter: '{value} °C'
+               //         }
+               //     },
+               //     series: [
+               //         {
+               //             name: '最高气温',
+               //             type: 'line',
+               //             data: [11, 11, 15, 13, 12, 13, 10],
+               //             markPoint: {
+               //                 data: [
+               //                     {type: 'max', name: '最大值'},
+               //                     {type: 'min', name: '最小值'}
+               //                 ]
+               //             },
+               //             markLine: {
+               //                 data: [
+               //                     {type: 'average', name: '平均值'}
+               //                 ]
+               //             }
+               //         },
+               //         {
+               //             name: '最低气温',
+               //             type: 'line',
+               //             data: [1, -2, 2, 5, 3, 2, 0],
+               //             markPoint: {
+               //                 data: [
+               //                     {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+               //                 ]
+               //             },
+               //             markLine: {
+               //                 data: [
+               //                     {type: 'average', name: '平均值'},
+               //                     [{
+               //                         symbol: 'none',
+               //                         x: '90%',
+               //                         yAxis: 'max'
+               //                     }, {
+               //                         symbol: 'circle',
+               //                         label: {
+               //                             position: 'start',
+               //                             formatter: '最大值'
+               //                         },
+               //                         type: 'max',
+               //                         name: '最高点'
+               //                     }]
+               //                 ]
+               //             }
+               //         }
+               //     ]
+               // };
+               mychart1.setOption(option);
+           },
+
+           //mod==4时按钮的操作
+           require4: function () {
+               //mychart1.clear();
+               let mychart2 = echarts.init(document.querySelector('#chartdiv2'))
+               // mychart1.clear();
+               let option2 = {
+                   title: {
+                       text: this.citydata,
+                       subtext: this.monthdata + '月',
+                   },
+                   tooltip: {
+                       trigger: 'axis'
+                   },
+                   legend: {
+                       data: ['最高气温', '最低气温']
+                   },
+                   toolbox: {
+                       show: true,
+                       feature: {
+                           dataZoom: {
+                               yAxisIndex: 'none'
+                           },
+                           dataView: {readOnly: false},
+                           magicType: {type: ['line', 'bar']},
+                           restore: {},
+                           saveAsImage: {}
+                       }
+                   },
+                   xAxis: {
+                       type: 'category',
+                       boundaryGap: false,
+                       data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                   },
+                   yAxis: {
+                       type: 'value',
+                       axisLabel: {
+                           formatter: '{value} °C'
+                       }
+                   },
+                   series: [
+                       {
+                           name: '最高气温',
+                           type: 'line',
+                           data: [12, 13, 10],
+                           markPoint: {
+                               data: [
+                                   {type: 'max', name: '最大值'},
+                                   {type: 'min', name: '最小值'}
+                               ]
+                           },
+                           markLine: {
+                               data: [
+                                   {type: 'average', name: '平均值'}
+                               ]
+                           }
+                       },
+                       {
+                           name: '最低气温',
+                           type: 'line',
+                           data: [1, -2, 2, 5, 3, 2, 0],
+                           markPoint: {
+                               data: [
+                                   {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                               ]
+                           },
+                           markLine: {
+                               data: [
+                                   {type: 'average', name: '平均值'},
+                                   [{
+                                       symbol: 'none',
+                                       x: '90%',
+                                       yAxis: 'max'
+                                   }, {
+                                       symbol: 'circle',
+                                       label: {
+                                           position: 'start',
+                                           formatter: '最大值'
+                                       },
+                                       type: 'max',
+                                       name: '最高点'
+                                   }]
+                               ]
+                           }
+                       }
+                   ]
+               };
+               mychart2.setOption(option2);
+           },
+
+           datainit: function () {
+               // alert('函数测试')
+               this.citydata = '';
+               this.citydata2 = '';
+               this.yeardata = '不选';
+               this.monthdata = '不选';
+               this.datedata = '';
+               //myChart.clear();
+           }
+       } ,
+           created: function () {
+               axios.post('./data.json')
+                   .then(function (response) {
+                       let data = response.data;
+                       vm.cities = data;
+
+                   })
+                   .catch(response => {
+                   })
+
+           }
+   })
 
 </script>
 </body>
