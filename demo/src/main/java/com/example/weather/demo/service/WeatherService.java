@@ -131,4 +131,16 @@ public class WeatherService {
         String result = String.format("%.2f",t);
         return result;
     }
+
+    public List<Map<String,String>> getAllavgtemps(){
+        List<Map<String,String>> list = null;
+        try{
+            list = weatherMapper.getAllavgtemps();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        System.out.println("success");
+        return list;
+    }
+
 }

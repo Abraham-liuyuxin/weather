@@ -155,6 +155,18 @@ public class WeatherController {
     }
 
 
+    /**
+     *
+     * @return 返回所有城市近5,10,15年的平均气温
+     */
+    @RequestMapping("/getAllavgtemps")
+    public List<Map<String,String>> getAllavgtemps(){
+        List<Map<String,String>> list;
+        list = weatherService.getAllavgtemps();
+        return list;
+    }
+
+
 
     @RequestMapping("/test_conn2")
     public Map<String,String> response2(@RequestParam(required = false) Map<String,String> test){

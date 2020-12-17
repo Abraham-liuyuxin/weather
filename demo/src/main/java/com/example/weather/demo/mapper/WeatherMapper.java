@@ -69,4 +69,7 @@ public interface WeatherMapper {
     @Select("select avg(T) from wea_info3_1 " +
             "where city_id = (#{js.cityid}) ")
     public Map<String,Double> getAvgby15years(@Param("js") Map<String,String> map);
+
+    @Select("select * from temp_avg")
+    public List<Map<String,String>> getAllavgtemps();
 }

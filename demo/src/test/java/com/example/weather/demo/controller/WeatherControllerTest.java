@@ -1,5 +1,6 @@
 package com.example.weather.demo.controller;
 
+import com.example.weather.demo.mapper.WeatherMapper;
 import com.example.weather.demo.service.WeatherService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ class WeatherControllerTest {
 
     @Resource
     WeatherService weatherService;
+    WeatherController weatherController;
 
     @Test
     void getCityname() {
@@ -69,5 +71,13 @@ class WeatherControllerTest {
     void getCitynameAndid() {
         List<Map<String,String>> list = weatherService.getCitynameAndid();
         System.out.println(list);
+    }
+
+    @Test
+    void getAllavgtemps() {
+        List<Map<String,String>> list = weatherController.getAllavgtemps();
+        for (Map<String,String> map:list){
+            System.out.println(map);
+        }
     }
 }

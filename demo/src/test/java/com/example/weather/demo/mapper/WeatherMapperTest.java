@@ -90,6 +90,14 @@ class WeatherMapperTest {
         }
     }
 
+    @Test
+    void getAllavgtemps() {
+        List<Map<String,String>> list;
+        list = weatherMapper.getAllavgtemps();
+        for (Map<String,String> map:list){
+            System.out.println(map);
+        }
+    }
 }
 
 
