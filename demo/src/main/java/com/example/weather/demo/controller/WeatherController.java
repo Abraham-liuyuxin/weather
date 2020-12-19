@@ -160,10 +160,12 @@ public class WeatherController {
      * @return 返回所有城市近5,10,15年的平均气温
      */
     @RequestMapping("/getAllavgtemps")
-    public List<Map<String,String>> getAllavgtemps(){
+    public Map<String,List> getAllavgtemps(){
         List<Map<String,String>> list;
         list = weatherService.getAllavgtemps();
-        return list;
+        Map<String,List> result = new HashMap<>();
+        result.put("tem_avgs",list);
+        return result;
     }
 
 

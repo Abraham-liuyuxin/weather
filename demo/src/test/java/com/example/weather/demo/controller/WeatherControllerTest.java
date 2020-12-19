@@ -75,9 +75,6 @@ class WeatherControllerTest {
 
     @Test
     void getAllavgtemps() {
-        List<Map<String,String>> list = weatherController.getAllavgtemps();
-        for (Map<String,String> map:list){
-            System.out.println(map);
-        }
+
     }
 }
