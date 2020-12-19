@@ -92,7 +92,6 @@
                             style="width: 75%"
                     >
 <!--                            :default-sort = "{prop: 'date', order: 'descending'}"-->
-
                         <el-table-column
                                 prop="date"
                                 label="日期"
@@ -295,14 +294,12 @@
     </el-container>
 </div>
 
-
 <script src="vue.js"></script>
 <script src="//unpkg.com/element-ui@2.14.0/lib/index.js"></script>
 <script src="echarts.min.js"></script>
 <script src="axios.min.js"></script>
 <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
 <script>
-    //let mychart2 = echarts.init(document.querySelector('#chartdiv2'))
     let option2 =       {
         title: {
             text: this.citydata,
@@ -477,9 +474,9 @@
            yeardata: '不选',
            months: ['不选', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
            monthdata: '不选',
-           mod: 0,
+           mod: 1,
            datedata: '',
-           period:[{show:'近一年', val:1},{show:'近五年', val:5},{show:'近十年', val:10},{show:'近十五年', val:15}],
+           period:[{show:'近五年', val:5},{show:'近十年', val:10},{show:'近十五年', val:15}],
            periodata:'',
            periodata2:"",
            OneData:[{date:'',
@@ -487,7 +484,7 @@
                maxtemp: '',
                mintemp: '',
                wea: ''}],
-           tableData: [{city: "2",temp: '2',}, {city: "2", temp: '2',}],
+           tableData: [],
            chartdata1:[{city:"",temp:""},{city:"",temp:""}],
        },
        methods: {
@@ -533,31 +530,35 @@
            require2: function(){
                switch (vm.periodata) {
                     case 5:
-                        axios.post('/getavgby5years').then(function (response) {
-                            let data = response.data;
-                            vm.tableData = response.data;
-                            // console.log(response);
+                        axios.post('/getAllavgtemps').then(function (response) {
+                            vm.tableData=[];
+                            let data = response.data.tem_avgs;
+                            for(let i=0;data[i]!=null;i++){
+                                vm.tableData.push({"city":data[i].cityname,"temp":data[i].avg5});
+                            }
                         });
                         break;
                     case 10:
-                        axios.post('/getavgby10years').then(function (response) {
-                            let data = response.data;
-                            vm.tableData = response.data;
-                            // console.log(response);
+                        axios.post('/getAllavgtemps').then(function (response) {
+                            vm.tableData=[];
+                            let data = response.data.tem_avgs;
+                            for(let i=0;data[i]!=null;i++){
+                                vm.tableData.push({"city":data[i].cityname,"temp":data[i].avg10});
+                            }
                         });
                         break;
                     case 15:
-                        axios.post('/getavgby15years').then(function (response) {
-                            let data = response.data;
-                            vm.tableData = response.data;
-                            // console.log(response);
+                        axios.post('/getAllavgtemps').then(function (response) {
+                            vm.tableData=[];
+                            let data = response.data.tem_avgs;
+                            for(let i=0;data[i]!=null;i++){
+                                vm.tableData.push({"city":data[i].cityname,"temp":data[i].avg15});
+                            }
                         });
                         break;
                     case 1:
                         ;
                }
-
-
            },
 
            //mod==3时按钮的操作
@@ -771,7 +772,6 @@
                            }));
                        break;
                    case 1:
-
                        ;}
 
 
