@@ -92,7 +92,6 @@
                             style="width: 75%"
                     >
 <!--                            :default-sort = "{prop: 'date', order: 'descending'}"-->
-
                         <el-table-column
                                 prop="date"
                                 label="日期"
@@ -140,10 +139,9 @@
                 </el-row>
                 <el-row>
                     <el-col :offset="6" :span="17">
-                        <el-table   id="b"
-                                                   :data="tableData"
-                                                   style="width: 75%;"
-                                                   :default-sort = "{prop: 'temp', order: 'descending'}"
+                        <el-table   :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+                                    style="width: 75%;"
+                                    :default-sort = "{prop: 'temp', order: 'descending'}"
                     >
                         <el-table-column
                                 prop="city"
@@ -157,8 +155,17 @@
                                 width="180">
                         </el-table-column>
                     </el-table>
+                        <el-pagination
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                :current-page="currentPage"
+                                :page-sizes="[5,10,20,40]"
+                                :page-size="pagesize"
+                                layout="total,sizes,prev,pager,next,jumper"
+                                :total="tableData.length"
+                        >
+                        </el-pagination>
                     </el-col>
-
                 </el-row>
             </el-main>
             <template v-if="mod==3">
@@ -295,176 +302,12 @@
     </el-container>
 </div>
 
-
 <script src="vue.js"></script>
 <script src="//unpkg.com/element-ui@2.14.0/lib/index.js"></script>
 <script src="echarts.min.js"></script>
 <script src="axios.min.js"></script>
 <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
 <script>
-    //let mychart2 = echarts.init(document.querySelector('#chartdiv2'))
-    let option2 =       {
-        title: {
-            text: this.citydata,
-            subtext: this.monthdata + '月',
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data: ['最高气温', '最低气温']
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                dataZoom: {
-                    yAxisIndex: 'none'
-                },
-                dataView: {readOnly: false},
-                magicType: {type: ['line', 'bar']},
-                restore: {},
-                saveAsImage: {}
-            }
-        },
-        xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-        },
-        yAxis: {
-            type: 'value',
-            axisLabel: {
-                formatter: '{value} °C'
-            }
-        },
-        series: [
-            {
-                name: '最高气温',
-                type: 'line',
-                data: [11, 11, 15, 13, 12, 13, 10],
-                markPoint: {
-                    data: [
-                        {type: 'max', name: '最大值'},
-                        {type: 'min', name: '最小值'}
-                    ]
-                },
-                markLine: {
-                    data: [
-                        {type: 'average', name: '平均值'}
-                    ]
-                }
-            },
-            {
-                name: '最低气温',
-                type: 'line',
-                data: [1, -2, 2, 5, 3, 2, 0],
-                markPoint: {
-                    data: [
-                        {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
-                    ]
-                },
-                markLine: {
-                    data: [
-                        {type: 'average', name: '平均值'},
-                        [{
-                            symbol: 'none',
-                            x: '90%',
-                            yAxis: 'max'
-                        }, {
-                            symbol: 'circle',
-                            label: {
-                                position: 'start',
-                                formatter: '最大值'
-                            },
-                            type: 'max',
-                            name: '最高点'
-                        }]
-                    ]
-                }
-            }
-        ]
-    };
-    let option = {
-        title: {
-            text: this.citydata + '与' + this.citydata2 + "对比",
-            subtext: this.yeardata + "年" + this.monthdata + '月',
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data: ['最高气温', '最低气温']
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                dataZoom: {
-                    yAxisIndex: 'none'
-                },
-                dataView: {readOnly: false},
-                magicType: {type: ['line', 'bar']},
-                restore: {},
-                saveAsImage: {}
-            }
-        },
-        xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-        },
-        yAxis: {
-            type: 'value',
-            axisLabel: {
-                formatter: '{value} °C'
-            }
-        },
-        series: [
-            {
-                name: '最高气温',
-                type: 'line',
-                data: [11, 11, 15, 13, 12, 13, 10],
-                markPoint: {
-                    data: [
-                        {type: 'max', name: '最大值'},
-                        {type: 'min', name: '最小值'}
-                    ]
-                },
-                markLine: {
-                    data: [
-                        {type: 'average', name: '平均值'}
-                    ]
-                }
-            },
-            {
-                name: '最低气温',
-                type: 'line',
-                data: [1, -2, 2, 5, 3, 2, 0],
-                markPoint: {
-                    data: [
-                        {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
-                    ]
-                },
-                markLine: {
-                    data: [
-                        {type: 'average', name: '平均值'},
-                        [{
-                            symbol: 'none',
-                            x: '90%',
-                            yAxis: 'max'
-                        }, {
-                            symbol: 'circle',
-                            label: {
-                                position: 'start',
-                                formatter: '最大值'
-                            },
-                            type: 'max',
-                            name: '最高点'
-                        }]
-                    ]
-                }
-            }
-        ]
-    };
    let vm= new Vue({
        el: '#bigblock',
        data: {
@@ -477,9 +320,9 @@
            yeardata: '不选',
            months: ['不选', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
            monthdata: '不选',
-           mod: 0,
+           mod: 1,
            datedata: '',
-           period:[{show:'近一年', val:1},{show:'近五年', val:5},{show:'近十年', val:10},{show:'近十五年', val:15}],
+           period:[{show:'近五年', val:5},{show:'近十年', val:10},{show:'近十五年', val:15}],
            periodata:'',
            periodata2:"",
            OneData:[{date:'',
@@ -487,26 +330,101 @@
                maxtemp: '',
                mintemp: '',
                wea: ''}],
-           tableData: [{city: "2",temp: '2',}, {city: "2", temp: '2',}],
+           tableData: [],
            chartdata1:[{city:"",temp:""},{city:"",temp:""}],
+           currentPage:1,   //默认页码为1
+           pagesize:10,  //默认一页显示10条
+           option: {
+               title: {
+                   text: this.citydata + '与' + this.citydata2 + "对比",
+                   subtext: this.yeardata + "年" + this.monthdata + '月',
+               },
+               tooltip: {
+                   trigger: 'axis'
+               },
+               legend: {
+                   data: ['最高气温', '最低气温']
+               },
+               toolbox: {
+                   show: true,
+                   feature: {
+                       dataZoom: {
+                           yAxisIndex: 'none'
+                       },
+                       dataView: {readOnly: false},
+                       magicType: {type: ['line', 'bar']},
+                       restore: {},
+                       saveAsImage: {}
+                   }
+               },
+               xAxis: {
+                   type: 'category',
+                   boundaryGap: false,
+                   data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+               },
+               yAxis: {
+                   type: 'value',
+                   axisLabel: {
+                       formatter: '{value} °C'
+                   }
+               },
+               series: [
+                   {
+                       name: '最高气温',
+                       type: 'line',
+                       data: [11, 11, 15, 13, 12, 13, 10],
+                       markPoint: {
+                           data: [
+                               {type: 'max', name: '最大值'},
+                               {type: 'min', name: '最小值'}
+                           ]
+                       },
+                       markLine: {
+                           data: [
+                               {type: 'average', name: '平均值'}
+                           ]
+                       }
+                   },
+                   {
+                       name: '最低气温',
+                       type: 'line',
+                       data: [1, -2, 2, 5, 3, 2, 0],
+                       markPoint: {
+                           data: [
+                               {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                           ]
+                       },
+                       markLine: {
+                           data: [
+                               {type: 'average', name: '平均值'},
+                               [{
+                                   symbol: 'none',
+                                   x: '90%',
+                                   yAxis: 'max'
+                               }, {
+                                   symbol: 'circle',
+                                   label: {
+                                       position: 'start',
+                                       formatter: '最大值'
+                                   },
+                                   type: 'max',
+                                   name: '最高点'
+                               }]
+                           ]
+                       }
+                   }
+               ]
+           }
        },
        methods: {
-           //查询某天的天气
-           requirebydate: function () {
-               let date1 = new Date(this.datedata);
-               let y = date1.getFullYear(); //获取完整的年份(4位,1970-????)
-               let m = date1.getMonth() + 1; //获取当前月份(0-11,0代表1月)
-               let d = date1.getDate(); //获取当前日(1-31)
-               axios.post('./data.json', {cityname: this.citydata, year: y, month: m, day: d})
-                   .then(function (response) {
-                       let data = response.data;
-                       vm.tableData = response.data;
-                       console.log(response);
-                   })
+           handleSizeChange:function(size){   //一页显示多少条
+               this.pagesize = size;
            },
+           handleCurrentChange:function(currentPage){  //页码更改方法
+               this.currentPage = currentPage;
+           },
+           //查询某天的天气
            require1: function () {
-               //this.tableData[0].date='2018/12/03';
-               //alert(this.tableData[0].date);
                if (!this.citydata) {
                    alert('请选择城市')
                } else {
@@ -533,31 +451,35 @@
            require2: function(){
                switch (vm.periodata) {
                     case 5:
-                        axios.post('/getavgby5years').then(function (response) {
-                            let data = response.data;
-                            vm.tableData = response.data;
-                            // console.log(response);
+                        axios.post('/getAllavgtemps').then(function (response) {
+                            vm.tableData=[];
+                            let data = response.data.tem_avgs;
+                            for(let i=0;data[i]!=null;i++){
+                                vm.tableData.push({"city":data[i].cityname,"temp":data[i].avg5});
+                            }
                         });
                         break;
                     case 10:
-                        axios.post('/getavgby10years').then(function (response) {
-                            let data = response.data;
-                            vm.tableData = response.data;
-                            // console.log(response);
+                        axios.post('/getAllavgtemps').then(function (response) {
+                            vm.tableData=[];
+                            let data = response.data.tem_avgs;
+                            for(let i=0;data[i]!=null;i++){
+                                vm.tableData.push({"city":data[i].cityname,"temp":data[i].avg10});
+                            }
                         });
                         break;
                     case 15:
-                        axios.post('/getavgby15years').then(function (response) {
-                            let data = response.data;
-                            vm.tableData = response.data;
-                            // console.log(response);
+                        axios.post('/getAllavgtemps').then(function (response) {
+                            vm.tableData=[];
+                            let data = response.data.tem_avgs;
+                            for(let i=0;data[i]!=null;i++){
+                                vm.tableData.push({"city":data[i].cityname,"temp":data[i].avg15});
+                            }
                         });
                         break;
                     case 1:
                         ;
                }
-
-
            },
 
            //mod==3时按钮的操作
@@ -566,95 +488,13 @@
                    alert('请选择不同的城市')
                }
                //mychart2.clear();
-               let mychart1 = echarts.init(document.querySelector('#chartdiv'))
-               //mychart2.clear();
-               // let option = {
-               //     title: {
-               //         text: this.citydata + '与' + this.citydata2 + "对比",
-               //         subtext: this.yeardata + "年" + this.monthdata + '月',
-               //     },
-               //     tooltip: {
-               //         trigger: 'axis'
-               //     },
-               //     legend: {
-               //         data: ['最高气温', '最低气温']
-               //     },
-               //     toolbox: {
-               //         show: true,
-               //         feature: {
-               //             dataZoom: {
-               //                 yAxisIndex: 'none'
-               //             },
-               //             dataView: {readOnly: false},
-               //             magicType: {type: ['line', 'bar']},
-               //             restore: {},
-               //             saveAsImage: {}
-               //         }
-               //     },
-               //     xAxis: {
-               //         type: 'category',
-               //         boundaryGap: false,
-               //         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-               //     },
-               //     yAxis: {
-               //         type: 'value',
-               //         axisLabel: {
-               //             formatter: '{value} °C'
-               //         }
-               //     },
-               //     series: [
-               //         {
-               //             name: '最高气温',
-               //             type: 'line',
-               //             data: [11, 11, 15, 13, 12, 13, 10],
-               //             markPoint: {
-               //                 data: [
-               //                     {type: 'max', name: '最大值'},
-               //                     {type: 'min', name: '最小值'}
-               //                 ]
-               //             },
-               //             markLine: {
-               //                 data: [
-               //                     {type: 'average', name: '平均值'}
-               //                 ]
-               //             }
-               //         },
-               //         {
-               //             name: '最低气温',
-               //             type: 'line',
-               //             data: [1, -2, 2, 5, 3, 2, 0],
-               //             markPoint: {
-               //                 data: [
-               //                     {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
-               //                 ]
-               //             },
-               //             markLine: {
-               //                 data: [
-               //                     {type: 'average', name: '平均值'},
-               //                     [{
-               //                         symbol: 'none',
-               //                         x: '90%',
-               //                         yAxis: 'max'
-               //                     }, {
-               //                         symbol: 'circle',
-               //                         label: {
-               //                             position: 'start',
-               //                             formatter: '最大值'
-               //                         },
-               //                         type: 'max',
-               //                         name: '最高点'
-               //                     }]
-               //                 ]
-               //             }
-               //         }
-               //     ]
-               // };
-               mychart1.setOption(option);
+               let mychart = echarts.init(document.querySelector('#chartdiv'))
+               mychart.setOption(option);
            },
 
            //mod==4时按钮的操作
            require4: function () {
-               let mychart2 = echarts.init(document.querySelector('#chartdiv2'))
+               let mychart = echarts.init(document.querySelector('#chartdiv2'))
                // mychart1.clear();
                let option2 = {
                    title: {
@@ -737,7 +577,7 @@
                        }
                    ]
                };
-               mychart2.setOption(option2);
+               mychart.setOption(option2);
            },
 
            //mod==5
@@ -749,7 +589,8 @@
                        .then(axios.spread(function (temp1,temp2) {
                                 vm.templist[0]=temp1.data;
                                 vm.templist[1]=temp2.data;
-                                console.log(vm.templist)
+                                console.log(vm.templist);
+                                vm.drawforreq5();
                        }));
                        break;
                    case 10:
@@ -758,7 +599,8 @@
                            .then(axios.spread(function (temp1,temp2) {
                                vm.templist[0]=temp1.data;
                                vm.templist[1]=temp2.data;
-                               console.log(vm.templist)
+                               console.log(vm.templist);
+                               vm.drawforreq5();
                            }));
                        break;
                    case 15:
@@ -767,91 +609,85 @@
                            .then(axios.spread(function (temp1,temp2) {
                                vm.templist[0]=temp1.data;
                                vm.templist[1]=temp2.data;
-                               console.log(vm.templist)
+                               console.log(vm.templist);
+                               vm.drawforreq5();
                            }));
                        break;
-                   case 1:
-
-                       ;}
-
-
-                    let cityname1='';
-                    let cityname2='';
-                    console.log(vm.templist[0]);
-                for (var i=0;i<vm.cities.length;i++)
-                 {
-                      if(vm.cities[i].city_id==vm.citydata){
-                          cityname1=vm.cities[i].city;
-                      }else if(vm.cities[i].city_id==vm.citydata2){
-                          cityname2=vm.cities[i].city;
-                      }
-                 }
-                       let option3 = {
-                           title: {
-                               text: cityname1 + '与' + cityname2 + "对比",
-                               subtext: "近"+vm.periodata2+"年",
-                           },
-                           tooltip: {
-                               trigger: 'axis'
-                           },
-                           legend: {
-                               data: ['平均气温']
-                           },
-                           toolbox: {
-                               show: true,
-                               feature: {
-                                   dataZoom: {
-                                       yAxisIndex: 'none'
-                                   },
-                                   dataView: {readOnly: false},
-                                   magicType: {type: ['line', 'bar']},
-                                   restore: {},
-                               }
-                           },
-                           xAxis: {
-                               type: 'category',
-                               boundaryGap: false,
-                               data: [cityname1,cityname2]
-                           },
-                           yAxis: {
-                               type: 'value',
-                               axisLabel: {
-                                   formatter: '{value} °C'
-                               }
-                           },
-                           series: [
-                               {
-                                   name: '平均气温',
-                                   type: 'line',
-                                   data: [vm.templist[0].tem_avg,vm.templist[1].tem_avg],
-                                   markPoint: {
-                                       data: [
-                                           {type: 'max', name: '最大值'},
-                                           {type: 'min', name: '最小值'}
-                                       ]
-                                   },
-                                   markLine: {
-                                       data: [
-                                           {type: 'average', name: '平均值'}
-                                       ]
-                                   }
-                               },
-                           ]
-                       };
-                       let mychart3 = echarts.init(document.querySelector('#chartdiv3'));
-                       mychart3.setOption(option3);
-
+                       }
            },
-
+            drawforreq5: function(){
+                let cityname1='';
+                let cityname2='';
+                for (var i=0;i<vm.cities.length;i++)
+                {
+                    if(vm.cities[i].city_id==vm.citydata){
+                        cityname1=vm.cities[i].city;
+                    }else if(vm.cities[i].city_id==vm.citydata2){
+                        cityname2=vm.cities[i].city;
+                    }
+                }
+                let option3 = {
+                    title: {
+                        text: cityname1 + '与' + cityname2 + "对比",
+                        subtext: "近"+vm.periodata2+"年",
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['平均气温']
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            dataZoom: {
+                                yAxisIndex: 'none'
+                            },
+                            dataView: {readOnly: false},
+                            magicType: {type: ['line', 'bar']},
+                            restore: {},
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: [cityname1,cityname2]
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value} °C'
+                        }
+                    },
+                    series: [
+                        {
+                            name: '平均气温',
+                            type: 'line',
+                            data: [vm.templist[0].tem_avg,vm.templist[1].tem_avg],
+                            markPoint: {
+                                data: [
+                                    {type: 'max', name: '最大值'},
+                                    {type: 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                    ]
+                };
+                let mychart = echarts.init(document.querySelector('#chartdiv3'));
+                mychart.setOption(option3);
+            },
 
            datainit: function () {
-               // alert('函数测试')
                this.citydata = '';
                this.citydata2 = '';
                this.yeardata = '不选';
                this.monthdata = '不选';
                this.datedata = '';
-               //myChart.clear();
            }
        } ,
            created: function () {
