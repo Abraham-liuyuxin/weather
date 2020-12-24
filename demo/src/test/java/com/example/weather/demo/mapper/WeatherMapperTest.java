@@ -98,6 +98,16 @@ class WeatherMapperTest {
             System.out.println(map);
         }
     }
+
+    @Test
+    void getavgbymonth() {
+        Map<String, Double> avg;
+        Map<String, String> js = new HashMap<>();
+        js.put("cityid", "50468");
+        js.put("my","11.2016");
+        avg = weatherMapper.getavgbymonth(js);
+        System.out.println(avg);
+    }
 }
 
 

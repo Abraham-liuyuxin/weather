@@ -168,7 +168,31 @@ public class WeatherController {
         return result;
     }
 
+    /**
+     *
+     * @param js for example:{"cityid":"57687", "month":"1", "year":"2015"}
+     * @return for eexample: { "tem_avg": "7.71" }
+     */
+    @RequestMapping("/getAvgbymonth")
+    public Map<String,String> getavgbymonth(@RequestBody(required = false) Map<String,String> js){
+        Map<String, String> param = new HashMap<>();
+        param.put("cityid",js.get("cityid"));
+        param.put("my", transtodate(js));
+        String tem = weatherService.getavgbymonth(param);
+        Map<String,String> result = new HashMap<>();
+        result.put("tem_avg",tem);
+        return result;
+    }
 
+    public String transtodate(Map<String,String> map){
+        String result = "";
+        if(map.get("month").length() == 1){
+            result = "0" + map.get("month") + "." + map.get("year");
+        }else{
+            result = map.get("month") + "." + map.get("year");
+        }
+        return result;
+    }
 
     @RequestMapping("/test_conn2")
     public Map<String,String> response2(@RequestParam(required = false) Map<String,String> test){

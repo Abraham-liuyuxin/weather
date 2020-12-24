@@ -143,4 +143,16 @@ public class WeatherService {
         return list;
     }
 
+    public String getavgbymonth(Map<String,String> js){
+        Map<String, Double> avg = new HashMap<>();
+        try{
+            avg = weatherMapper.getavgbymonth(js);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        double t = avg.get("avg(T)");
+        String result = String.format("%.2f",t);
+        return result;
+    }
+
 }

@@ -72,4 +72,9 @@ public interface WeatherMapper {
 
     @Select("select * from temp_avg")
     public List<Map<String,String>> getAllavgtemps();
+
+    @Select("select avg(T) from wea_info3_1 " +
+            "where date like CONCAT('%',#{js.my})" +
+            "and city_id = (#{js.cityid})")
+    public Map<String,Double> getavgbymonth(@Param("js") Map<String,String> map);
 }

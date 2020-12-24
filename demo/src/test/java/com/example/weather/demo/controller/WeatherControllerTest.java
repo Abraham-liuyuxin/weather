@@ -77,4 +77,9 @@ class WeatherControllerTest {
     void getAllavgtemps() {
 
     }
+
+    @Test
+    void getavgbymonth() {
+
+    }
 }
